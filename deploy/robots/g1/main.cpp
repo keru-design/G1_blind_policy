@@ -37,6 +37,10 @@ int main(int argc, char** argv)
     unitree::robot::ChannelFactory::Instance()->Init(0, vm["network"].as<std::string>());
 
     init_fsm_state();
+    if(vm.count("auto_start")) {
+        spdlog::warn("--auto_start is for SIMULATION only. Never use it on the real robot.");
+        FSMState::auto_start_stage = 1;
+    }
 
     FSMState::lowcmd->msg_.mode_machine() = 5; // 29dof
     if(!FSMState::lowcmd->check_mode_machine(FSMState::lowstate)) {
@@ -51,6 +55,7 @@ int main(int argc, char** argv)
     std::cout << "Press [L2 + Up] to enter FixStand mode.\n";
     std::cout << "And then press [R2 + A] to start controlling the robot.\n";
     std::cout << "And then press [R1 + A/B/Y/X] to control the robot dance.\n";
+    std::cout << "Keyboard: 1 FixStand, 2 Velocity, 0 Passive | w/s a/d q/e: +/-0.1 vx vy wz, space: stop\n";
 
     while (true)
     {

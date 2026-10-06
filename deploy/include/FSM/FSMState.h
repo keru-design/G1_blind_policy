@@ -5,6 +5,7 @@
 #include "FSM/BaseState.h"
 #include "isaaclab/devices/keyboard/keyboard.h"
 #include "unitree_joystick_dsl.hpp"
+#include <chrono>
 
 class FSMState : public BaseState
 {
@@ -63,6 +64,30 @@ public:
             }
         }
 
+        // SIM ONLY (--auto_start): Passive -> FixStand -> (2.5 s) -> Velocity, once.
+        if(state_string == "Passive" && FSMStringMap.right.count("FixStand"))
+        {
+            registered_checks.emplace_back(std::make_pair(
+                []()->bool{
+                    if(auto_start_stage != 1) return false;
+                    auto_start_stage = 2;
+                    return true;
+                },
+                FSMStringMap.right.at("FixStand")));
+        }
+        if(state_string == "FixStand" && FSMStringMap.right.count("Velocity"))
+        {
+            registered_checks.emplace_back(std::make_pair(
+                []()->bool{
+                    if(auto_start_stage != 2) return false;
+                    static auto t0 = std::chrono::steady_clock::now();
+                    if(std::chrono::steady_clock::now() - t0 < std::chrono::milliseconds(2500)) return false;
+                    auto_start_stage = 3;
+                    return true;
+                },
+                FSMStringMap.right.at("Velocity")));
+        }
+
         // register for all states
         registered_checks.emplace_back(
             std::make_pair(
@@ -86,4 +111,5 @@ public:
     static std::unique_ptr<LowCmd_t> lowcmd;
     static std::shared_ptr<LowState_t> lowstate;
     static std::shared_ptr<Keyboard> keyboard;
+    inline static int auto_start_stage = 0;  // 1 = requested by --auto_start
 };
