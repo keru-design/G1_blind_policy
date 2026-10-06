@@ -1,6 +1,10 @@
 #pragma once
 
 #include <mujoco/mujoco.h>
+#include <atomic>
+
+// Set once the controller sends any motor command with kp > 0.
+inline std::atomic<bool> g_controller_active{false};
 
 #include <unitree/robot/channel/channel_publisher.hpp>
 #include <unitree/robot/channel/channel_subscriber.hpp>
@@ -180,6 +184,7 @@ public:
             std::lock_guard<std::mutex> lock(lowcmd->mutex_);
             for(int i(0); i<num_motor_; i++) {
                 auto & m = lowcmd->msg_.motor_cmd()[i];
+                if(m.kp() > 0) g_controller_active = true;
                 mj_data_->ctrl[i] = m.tau() +
                                     m.kp() * (m.q() - mj_data_->sensordata[i]) +
                                     m.kd() * (m.dq() - mj_data_->sensordata[i + num_motor_]);

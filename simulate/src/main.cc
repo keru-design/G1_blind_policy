@@ -416,6 +416,16 @@ namespace
         // run only if model is present
         if (m)
         {
+          // hold_until_cmd: keep the initial pose until the controller takes over
+          if (param::config.hold_until_cmd && !g_controller_active)
+          {
+            static std::vector<mjtNum> qpos_hold(d->qpos, d->qpos + m->nq);
+            mju_copy(d->qpos, qpos_hold.data(), m->nq);
+            mju_zero(d->qvel, m->nv);
+            mj_forward(m, d);
+            continue;
+          }
+
           // running
           if (sim.run)
           {

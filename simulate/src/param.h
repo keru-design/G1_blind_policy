@@ -25,6 +25,7 @@ inline struct SimulationConfig
 
     int enable_elastic_band;
     int band_attached_link = 0;
+    int hold_until_cmd = 0;  // freeze the robot pose until the controller sends kp > 0
 
     void load_from_yaml(const std::string &filename)
     {
@@ -41,6 +42,7 @@ inline struct SimulationConfig
             joystick_bits = cfg["joystick_bits"].as<int>();
             print_scene_information = cfg["print_scene_information"].as<int>();
             enable_elastic_band = cfg["enable_elastic_band"].as<int>();
+            if(cfg["hold_until_cmd"]) hold_until_cmd = cfg["hold_until_cmd"].as<int>();
         }
         catch(const std::exception& e)
         {
