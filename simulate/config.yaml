@@ -21,3 +21,4 @@ print_scene_information: 1 # Print link, joint and sensors information of robot
 
 enable_elastic_band: 0 # Virtual spring band, used for lifting h1
 hold_until_cmd: 1 # Keru: freeze robot until g1_ctrl sends commands (no band needed)
+hold_base_s: 3.0  # Keru: then pin the base this long (FixStand 2.5 s + 0.5 s of RL)

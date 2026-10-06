@@ -26,6 +26,8 @@ inline struct SimulationConfig
     int enable_elastic_band;
     int band_attached_link = 0;
     int hold_until_cmd = 0;  // freeze the robot pose until the controller sends kp > 0
+    double hold_base_s = 3.0;    // then keep the base pinned for this long (sim seconds)
+    double hold_base_z = 0.785;  // base height while pinned (G1 standing height)
 
     void load_from_yaml(const std::string &filename)
     {
@@ -43,6 +45,8 @@ inline struct SimulationConfig
             print_scene_information = cfg["print_scene_information"].as<int>();
             enable_elastic_band = cfg["enable_elastic_band"].as<int>();
             if(cfg["hold_until_cmd"]) hold_until_cmd = cfg["hold_until_cmd"].as<int>();
+            if(cfg["hold_base_s"]) hold_base_s = cfg["hold_base_s"].as<double>();
+            if(cfg["hold_base_z"]) hold_base_z = cfg["hold_base_z"].as<double>();
         }
         catch(const std::exception& e)
         {

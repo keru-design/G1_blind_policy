@@ -496,6 +496,17 @@ namespace
                   measured = true;
                 }
 
+                // hold_until_cmd: pin the floating base (invisible gantry) until
+                // hold_base_s of sim time after the controller took over, so
+                // FixStand (no balance) can't tip over before the RL policy starts.
+                if (param::config.hold_until_cmd && g_controller_active && d->time < param::config.hold_base_s)
+                {
+                  static std::vector<mjtNum> base_hold(d->qpos, d->qpos + 7);
+                  base_hold[2] = param::config.hold_base_z;
+                  mju_copy(d->qpos, base_hold.data(), 7);
+                  mju_zero(d->qvel, 6);
+                }
+
                 // elastic band on base link
                 if (param::config.enable_elastic_band == 1)
                 {
