@@ -77,7 +77,7 @@ FSM:
 
     policy_dir: config/policy/velocity
     # keyboard: deploy_keyboard.yaml   joystick / real robot remote: deploy.yaml
-    deploy_file: deploy_keyboard.yaml
+    deploy_file: deploy.yaml
 
 
   Mimic_Dance1_subject2:
