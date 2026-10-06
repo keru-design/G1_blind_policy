@@ -44,6 +44,25 @@ public:
             }
         }
 
+        // Optional keyboard shortcuts, active alongside the joystick ones.
+        // config.yaml: keyboard_transitions: { FixStand: "1", Passive: "0" }
+        auto kb_transitions = param::config["FSM"][state_string]["keyboard_transitions"];
+        if(kb_transitions)
+        {
+            for(auto it : kb_transitions.as<std::map<std::string, std::string>>())
+            {
+                if(!FSMStringMap.right.count(it.first)) continue;
+                int fsm_id = FSMStringMap.right.at(it.first);
+                std::string key = it.second;
+                registered_checks.emplace_back(
+                    std::make_pair(
+                        [key]()->bool{ return keyboard && keyboard->on_pressed && keyboard->key() == key; },
+                        fsm_id
+                    )
+                );
+            }
+        }
+
         // register for all states
         registered_checks.emplace_back(
             std::make_pair(
