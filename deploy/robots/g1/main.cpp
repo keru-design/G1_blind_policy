@@ -37,6 +37,7 @@ int main(int argc, char** argv)
     unitree::robot::ChannelFactory::Instance()->Init(0, vm["network"].as<std::string>());
 
     init_fsm_state();
+    FSMState::keyboard_cmd = vm.count("keyboard") > 0;
     if(vm.count("auto_start")) {
         spdlog::warn("--auto_start is for SIMULATION only. Never use it on the real robot.");
         FSMState::auto_start_stage = 1;

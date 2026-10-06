@@ -111,5 +111,6 @@ public:
     static std::unique_ptr<LowCmd_t> lowcmd;
     static std::shared_ptr<LowState_t> lowstate;
     static std::shared_ptr<Keyboard> keyboard;
+    inline static bool keyboard_cmd = false;  // --keyboard
     inline static int auto_start_stage = 0;  // 1 = requested by --auto_start
 };

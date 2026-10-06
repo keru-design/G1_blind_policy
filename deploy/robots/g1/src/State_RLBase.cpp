@@ -79,6 +79,7 @@ State_RLBase::State_RLBase(int state_mode, std::string state_string)
 
     // config.yaml can pick another file, e.g. deploy_file: deploy_keyboard.yaml
     auto deploy_file = cfg["deploy_file"] ? cfg["deploy_file"].as<std::string>() : std::string("deploy.yaml");
+    if(FSMState::keyboard_cmd) deploy_file = "deploy_keyboard.yaml";
     spdlog::info("Loading {}", (policy_dir / "params" / deploy_file).string());
     env = std::make_unique<isaaclab::ManagerBasedRLEnv>(
         YAML::LoadFile(policy_dir / "params" / deploy_file),
